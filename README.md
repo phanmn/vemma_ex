@@ -190,6 +190,34 @@ session.partial                                             # text so far of the
 `accept/2` re-decodes the current utterance in streaming mode. An utterance ends after 0.8 s with no
 new tokens; it is then re-decoded with full context and returned as final.
 
+## Live transcription demo (microphone or screen share)
+
+`examples/live_transcribe.exs` is a single-file Phoenix LiveView app (via
+[phoenix_playground](https://hex.pm/packages/phoenix_playground), no npm, no build step) that
+transcribes the browser microphone, the audio of a shared screen or tab, or both at once in two
+columns:
+
+```sh
+VEMMA_MODEL_DIR=$M/onnx elixir examples/live_transcribe.exs   # then open http://localhost:4000
+elixir examples/live_transcribe.exs                           # downloads the model first
+```
+
+- The microphone comes from `getUserMedia` with echo cancellation and noise suppression on.
+  Screen audio comes from `getDisplayMedia`: the browser requires video, which is stopped at once,
+  and only the audio track is kept. Tab and system audio capture works in Chrome and Edge, with
+  "Share audio" ticked. Firefox and Safari can't capture it, and the page says so.
+- An AudioWorklet per source downmixes to mono, decimates to 16 kHz f32, and sends 0.48 s chunks
+  (base64 over `pushEvent`).
+- The LiveView keeps one `VemmaEx.Live` session per source and decodes with `start_async`, one
+  decode per source at a time. Chunks that arrive during a decode are coalesced into the next one,
+  keeping at most the newest 10 s. It shows the in-progress text and the finished lines.
+- Stopping, including the browser's own "Stop sharing" bar, flushes the last partial into a final
+  line.
+
+`elixir examples/live_transcribe.exs --check some_16k.wav` feeds a WAV through the same
+`start`/`chunk`/`stop` events as two sources at 4x real time, and checks the text against
+`VemmaEx.transcribe/3`.
+
 ## Long audio
 
 Audio longer than `:chunk_seconds` (default 30) is cut at the quietest 50 ms window in the last
