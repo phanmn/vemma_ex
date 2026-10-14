@@ -1,0 +1,9 @@
+%{
+  "castore": {:hex, :castore, "1.0.21", "0a0e8330dc267a40a3b7ad86d39302764bb71758172904e6a59d5ad6443ce307", [:mix], [], "hexpm", "e42e22723e25dbd46876d056a03f685513d6e98f6b5e555dc551321decd76c5c"},
+  "complex": {:hex, :complex, "0.7.0", "695632ef9487517aa5d57edd1697801079d622414cb2e1a7cf538b1f9a50f205", [:mix], [], "hexpm", "0ee39c0803129f546e7f3f640da8f021c9e659402bf59da6f7f2c4848f068f8d"},
+  "nx": {:hex, :nx, "0.13.1", "f96311a573dcd57d11ff889958ee518f52f7c16dbf6d22191020d322887856fc", [:mix], [{:complex, "~> 0.7", [hex: :complex, repo: "hexpm", optional: false]}, {:telemetry, "~> 0.4.0 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "20556ea36c1e9732c1d87eebbf7c0773517e876e92af4ff592b974f80db0b9d9"},
+  "ortex": {:git, "https://github.com/phanmn/ortex.git", "b0af1ea2b3c9942bb0cb98b26eabf706b0f8af85", [branch: "main"]},
+  "rustler_precompiled": {:hex, :rustler_precompiled, "0.10.0", "8f07ff0865cb09a6a0f75e11701e9a46e331e05f737da4e5b01374dcd25b68c0", [:mix], [{:rustler, "~> 0.28", [hex: :rustler, repo: "hexpm", optional: true]}], "hexpm", "c68c9dc732c12acfdf4a7fa06f4e6f48a641179e6be49a474c8a60809929c430"},
+  "telemetry": {:hex, :telemetry, "1.4.2", "a0cb522801dffb1c49fe6e30561badffc7b6d0e180db1300df759faa22062855", [:rebar3], [], "hexpm", "928f6495066506077862c0d1646609eed891a4326bee3126ba54b60af61febb1"},
+  "tokenizers": {:hex, :tokenizers, "0.5.1", "b0975d92b4ee5b18e8f47b5d65b9d5f1e583d9130189b1a2620401af4e7d4b35", [:mix], [{:castore, "~> 0.1 or ~> 1.0", [hex: :castore, repo: "hexpm", optional: false]}, {:rustler, ">= 0.0.0", [hex: :rustler, repo: "hexpm", optional: true]}, {:rustler_precompiled, "~> 0.6", [hex: :rustler_precompiled, repo: "hexpm", optional: false]}], "hexpm", "5f08d97cc7f2ed3d71d370d68120da6d3de010948ccf676c9c0eb591ba4bacc9"},
+}
