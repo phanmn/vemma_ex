@@ -5,6 +5,10 @@
 #
 # then open http://localhost:4000, pick a source and press Start. Without
 # VEMMA_MODEL_DIR the model is downloaded (1.4 GB) to vemma_ex's priv/models.
+# VEMMA_DEMO_IP=100.x.y.z serves on that address instead; browsers only allow
+# mic and screen capture there over HTTPS: set VEMMA_DEMO_CERTFILE and
+# VEMMA_DEMO_KEYFILE (a self-signed pair is fine) for https://<ip>:4000, or use
+# Chrome's chrome://flags/#unsafely-treat-insecure-origin-as-secure.
 #
 #     elixir examples/live_transcribe.exs --check path/to/16k.wav
 #
@@ -454,8 +458,34 @@ end
         end
 
       _ ->
-        PhoenixPlayground.start(live: LiveTranscribe.Page, port: 4000, open_browser: false)
-        IO.puts("open http://localhost:4000")
+        # VEMMA_DEMO_IP serves on another address (e.g. a Tailscale IP); it is the
+        # host too, so LiveView's origin check accepts that address.
+        host = System.get_env("VEMMA_DEMO_IP", "127.0.0.1")
+        {:ok, ip} = host |> String.to_charlist() |> :inet.parse_address()
+
+        # VEMMA_DEMO_CERTFILE + VEMMA_DEMO_KEYFILE (e.g. a self-signed pair) make
+        # port 4000 HTTPS instead of HTTP: a secure context, so the browser allows
+        # capture there.
+        https =
+          {System.get_env("VEMMA_DEMO_CERTFILE"), System.get_env("VEMMA_DEMO_KEYFILE")}
+          |> case do
+            {cert, key} when is_binary(cert) and is_binary(key) ->
+              [http: false, https: [ip: ip, port: 4000, certfile: cert, keyfile: key]]
+
+            _ ->
+              []
+          end
+
+        PhoenixPlayground.start(
+          live: LiveTranscribe.Page,
+          ip: ip,
+          host: host,
+          port: 4000,
+          open_browser: false,
+          endpoint_options: https
+        )
+
+        IO.puts("open #{if https == [], do: "http", else: "https"}://#{host}:4000")
         Process.sleep(:infinity)
     end
 end
