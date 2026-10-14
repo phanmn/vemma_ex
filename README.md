@@ -214,6 +214,21 @@ elixir examples/live_transcribe.exs                           # downloads the mo
 - Stopping, including the browser's own "Stop sharing" bar, flushes the last partial into a final
   line.
 
+To open it from another machine (e.g. over Tailscale), serve it on that address. Browsers only
+allow the microphone and screen capture over HTTPS (or on localhost), so give it a certificate; a
+self-signed one is fine (the browser warns once):
+
+```sh
+openssl req -x509 -newkey rsa:2048 -nodes -days 30 -keyout key.pem -out cert.pem \
+  -subj "/CN=vemma demo" -addext "subjectAltName=IP:100.87.220.36"
+
+VEMMA_DEMO_IP=100.87.220.36 VEMMA_DEMO_CERTFILE=cert.pem VEMMA_DEMO_KEYFILE=key.pem \
+  VEMMA_MODEL_DIR=$M/onnx elixir examples/live_transcribe.exs   # https://100.87.220.36:4000
+```
+
+`VEMMA_DEMO_IP` sets both the listen address and the host LiveView checks origins against. With a
+certificate, port 4000 serves HTTPS only.
+
 `elixir examples/live_transcribe.exs --check some_16k.wav` feeds a WAV through the same
 `start`/`chunk`/`stop` events as two sources at 4x real time, and checks the text against
 `VemmaEx.transcribe/3`.
